@@ -1,3 +1,4 @@
+use crate::ErrorCode;
 use crate::*;
 
 /// Accounts for [voter::init_instant_unstake_config].
@@ -54,7 +55,10 @@ impl<'info> InitInstantUnstakeConfig<'info> {
             params.instant_penalty_bps <= 10_000,
             ErrorCode::InvalidPenaltyBps
         );
-        require!(params.fee_recipient != Pubkey::default(), ErrorCode::InvalidFeeRecipient);
+        require!(
+            params.fee_recipient != Pubkey::default(),
+            ErrorCode::InvalidFeeRecipient
+        );
 
         let config = &mut self.config;
         config.locker = self.locker.key();

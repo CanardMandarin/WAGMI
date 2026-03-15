@@ -1,3 +1,4 @@
+use crate::ErrorCode;
 use crate::*;
 
 /// Accounts for [voter::set_instant_unstake_params].
@@ -36,11 +37,17 @@ impl<'info> SetInstantUnstakeParams<'info> {
 
         match params {
             InstantUnstakeUpdateParams::Enable => {
-                require!(config.enabled == false, ErrorCode::InstantUnstakeAlreadyEnabled);
+                require!(
+                    !config.enabled,
+                    ErrorCode::InstantUnstakeAlreadyEnabled
+                );
                 config.enabled = true;
             }
             InstantUnstakeUpdateParams::Disable => {
-                require!(config.enabled == true, ErrorCode::InstantUnstakeAlreadyDisabled);
+                require!(
+                    config.enabled,
+                    ErrorCode::InstantUnstakeAlreadyDisabled
+                );
                 config.enabled = false;
             }
             InstantUnstakeUpdateParams::PenaltyBps(penalty_bps) => {
@@ -48,7 +55,10 @@ impl<'info> SetInstantUnstakeParams<'info> {
                 config.instant_penalty_bps = penalty_bps;
             }
             InstantUnstakeUpdateParams::FeeRecipient(fee_recipient) => {
-                require!(fee_recipient != Pubkey::default(), ErrorCode::InvalidFeeRecipient);
+                require!(
+                    fee_recipient != Pubkey::default(),
+                    ErrorCode::InvalidFeeRecipient
+                );
                 config.fee_recipient = fee_recipient;
             }
         }

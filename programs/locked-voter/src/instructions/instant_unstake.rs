@@ -1,3 +1,4 @@
+use crate::ErrorCode;
 use crate::*;
 use anchor_spl::token;
 
@@ -50,8 +51,8 @@ impl<'info> InstantUnstake<'info> {
         );
 
         let penalty_amount: u64 = {
-            let raw = unwrap_int!((amount as u128)
-                .checked_mul(self.config.instant_penalty_bps as u128));
+            let raw =
+                unwrap_int!((amount as u128).checked_mul(self.config.instant_penalty_bps as u128));
             let divided = unwrap_int!(raw.checked_div(10_000));
             unwrap_int!(u64::try_from(divided).ok())
         };

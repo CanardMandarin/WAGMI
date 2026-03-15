@@ -198,11 +198,7 @@ pub struct InstantUnstakeConfig {
 
 impl InstantUnstakeConfig {
     /// LEN of InstantUnstakeConfig
-    pub const LEN: usize = std::mem::size_of::<Pubkey>() * 2
-        + 1
-        + 1
-        + 2
-        + 16 * 7;
+    pub const LEN: usize = std::mem::size_of::<Pubkey>() * 2 + 1 + 1 + 2 + 16 * 7;
 }
 
 #[cfg(test)]
