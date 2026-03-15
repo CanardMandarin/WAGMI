@@ -179,6 +179,32 @@ impl PartialUnstaking {
     pub const LEN: usize = std::mem::size_of::<Pubkey>() + 8 + 8 + 16 * 6;
 }
 
+/// Configuration for instant unstaking with penalty fee.
+/// Stored as a PDA derived from the [Locker].
+#[account]
+#[derive(Copy, Debug, Default)]
+pub struct InstantUnstakeConfig {
+    /// The [Locker] this config belongs to.
+    pub locker: Pubkey,
+    /// Bump seed.
+    pub bump: u8,
+    /// Whether instant unstaking is currently enabled.
+    pub enabled: bool,
+    /// Penalty in basis points for instant unstake (e.g., 1200 = 12%).
+    pub instant_penalty_bps: u16,
+    /// Recipient of penalty fees.
+    pub fee_recipient: Pubkey,
+}
+
+impl InstantUnstakeConfig {
+    /// LEN of InstantUnstakeConfig
+    pub const LEN: usize = std::mem::size_of::<Pubkey>() * 2
+        + 1
+        + 1
+        + 2
+        + 16 * 7;
+}
+
 #[cfg(test)]
 #[allow(clippy::unwrap_used)]
 mod tests {

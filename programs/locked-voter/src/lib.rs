@@ -119,6 +119,35 @@ pub mod locked_voter {
     pub fn withdraw_partial_unstaking(ctx: Context<WithdrawPartialUnstaking>) -> Result<()> {
         ctx.accounts.withdraw_partial_unstaking()
     }
+
+    /// Initialize instant unstake configuration for a [Locker].
+    /// Governance-gated: requires the Governor's smart wallet to sign.
+    #[access_control(ctx.accounts.validate())]
+    pub fn init_instant_unstake_config(
+        ctx: Context<InitInstantUnstakeConfig>,
+        params: InstantUnstakeParams,
+    ) -> Result<()> {
+        ctx.accounts
+            .init_instant_unstake_config(unwrap_bump!(ctx, "config"), params)
+    }
+
+    /// Update instant unstake parameters.
+    /// Governance-gated: requires the Governor's smart wallet to sign.
+    #[access_control(ctx.accounts.validate())]
+    pub fn set_instant_unstake_params(
+        ctx: Context<SetInstantUnstakeParams>,
+        params: InstantUnstakeUpdateParams,
+    ) -> Result<()> {
+        ctx.accounts.set_instant_unstake_params(params)
+    }
+
+    /// Instantly unstake tokens from an [Escrow], paying a penalty fee.
+    /// The penalty is sent to the fee recipient configured by governance.
+    /// The caller receives (1 - penalty%) of the unstaked amount immediately.
+    #[access_control(ctx.accounts.validate())]
+    pub fn instant_unstake(ctx: Context<InstantUnstake>, amount: u64) -> Result<()> {
+        ctx.accounts.instant_unstake(amount)
+    }
 }
 
 /// [voter] errors.
@@ -154,4 +183,14 @@ pub enum ErrorCode {
     PartialUnstakingAmountIsNotZero,
     #[msg("Partial unstaking has not ended")]
     PartialUnstakingIsNotEnded,
+    #[msg("Instant unstake is not enabled")]
+    InstantUnstakeDisabled,
+    #[msg("Penalty basis points exceeds maximum (10000)")]
+    InvalidPenaltyBps,
+    #[msg("Instant unstake is already enabled")]
+    InstantUnstakeAlreadyEnabled,
+    #[msg("Instant unstake is already disabled")]
+    InstantUnstakeAlreadyDisabled,
+    #[msg("Invalid fee recipient")]
+    InvalidFeeRecipient,
 }
